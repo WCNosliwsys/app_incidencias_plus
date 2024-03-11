@@ -1,0 +1,67 @@
+{
+  "project_info": {
+    "project_number": "462946456663",
+    "project_id": "fir-flutter2024-7b94b",
+    "storage_bucket": "fir-flutter2024-7b94b.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:462946456663:android:d716bf02a6418e42eaff12",
+        "android_client_info": {
+          "package_name": "com.ditec.exports.exports_and_charts"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAwVmajQhXz7xmDT8Zv1xbHziQ7AlgeaXo"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:462946456663:android:5fd0ff797c9e9012eaff12",
+        "android_client_info": {
+          "package_name": "com.ditec.fireBD.mifirebase"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAwVmajQhXz7xmDT8Zv1xbHziQ7AlgeaXo"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:462946456663:android:4ae02cd769623598eaff12",
+        "android_client_info": {
+          "package_name": "com.ditec.incidencias.app_incidencias_plus"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAwVmajQhXz7xmDT8Zv1xbHziQ7AlgeaXo"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
