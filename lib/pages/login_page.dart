@@ -3,7 +3,6 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 
-
 class LoginPage extends StatelessWidget {
   GoogleSignIn googleSignIn = GoogleSignIn();
   final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
@@ -11,15 +10,13 @@ class LoginPage extends StatelessWidget {
   Future<void> signInWithGoogle(BuildContext context) async {
     try {
       GoogleSignInAccount? googleSignInAccount = await googleSignIn.signIn();
-      GoogleSignInAuthentication? googleSignInAuthentication =
-          await googleSignInAccount?.authentication;
+      GoogleSignInAuthentication? googleSignInAuthentication = await googleSignInAccount?.authentication;
       AuthCredential credential = GoogleAuthProvider.credential(
         accessToken: googleSignInAuthentication?.accessToken,
         idToken: googleSignInAuthentication?.idToken,
       );
 
-      User? user =
-          (await _firebaseAuth.signInWithCredential(credential)).user;
+      User? user = (await _firebaseAuth.signInWithCredential(credential)).user;
       print(user?.displayName);
       print(user?.email);
 
@@ -52,11 +49,46 @@ class LoginPage extends StatelessWidget {
         body: Container(
           height: MediaQuery.of(context).size.height,
           width: double.infinity,
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              begin: Alignment.topCenter,
+              end: Alignment.bottomCenter,
+              colors: [
+                Color(0xFF003366),
+                Color(0xFF87CEEB),
+              ],
+            ),
+          ),
           child: SingleChildScrollView(
             child: Column(
               children: [
-                // Otros widgets que formen parte de la UI pero no estén relacionados con el login pueden permanecer aquí.
+                SizedBox(
+                  height: 50,
+                ),
+                Text("App de Registro de Incidencias",
+                    style: TextStyle(color: Colors.white, fontSize: 30, fontWeight: FontWeight.bold)),
+                SizedBox(
+                  height: 20,
+                ),
+                Image.asset(
+                  "assets/mi_logo.png",
+                  width: MediaQuery.of(context).size.width / 2,
+                ),
+                SizedBox(
+                  height: 20,
+                ),
+                Text(
+                  "Inicia sesión",
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 25,
+                  ),
+                ),
+                SizedBox(
+                  height: 30,
+                ),
                 SizedBox(height: 24),
+                
                 ElevatedButton(
                   onPressed: () {
                     signInWithGoogle(context);
