@@ -1,4 +1,5 @@
 import 'package:app_incidencias_plus/pages/home_page.dart';
+import 'package:app_incidencias_plus/services/shared_preferences_services.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_sign_in/google_sign_in.dart';
@@ -17,10 +18,13 @@ class LoginPage extends StatelessWidget {
       );
 
       User? user = (await _firebaseAuth.signInWithCredential(credential)).user;
-      print(user?.displayName);
-      print(user?.email);
 
       if (user != null) {
+        SharedPreferencesService().saveOnLogin(true);
+        SharedPreferencesService().saveDisplayName(user.displayName ?? "");
+        SharedPreferencesService().saveEmail(user.email ?? "");
+        SharedPreferencesService().savePhotoURL(user.photoURL ?? "");
+
         Navigator.push(
           context,
           MaterialPageRoute(
