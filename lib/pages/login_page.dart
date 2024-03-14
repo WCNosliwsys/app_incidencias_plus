@@ -59,44 +59,50 @@ class LoginPage extends StatelessWidget {
               ],
             ),
           ),
-          child: SingleChildScrollView(
-            child: Column(
-              children: [
-                SizedBox(
-                  height: 50,
-                ),
-                Text("App de Registro de Incidencias",
-                    style: TextStyle(color: Colors.white, fontSize: 30, fontWeight: FontWeight.bold)),
-                SizedBox(
-                  height: 20,
-                ),
-                Image.asset(
-                  "assets/mi_logo.png",
-                  width: MediaQuery.of(context).size.width / 2,
-                ),
-                SizedBox(
-                  height: 20,
-                ),
-                Text(
-                  "Inicia sesión",
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Text("App de Registro de Incidencias",
                   style: TextStyle(
                     color: Colors.white,
-                    fontSize: 25,
+                    fontSize: 30,
+                    fontWeight: FontWeight.bold,
+                  ),
+                  textAlign: TextAlign.center),
+              SizedBox(
+                height: 20,
+              ),
+              Image.asset(
+                "assets/mi_logo.png",
+                width: MediaQuery.of(context).size.width / 2,
+              ),
+              SizedBox(
+                height: 30,
+              ),
+              SizedBox(height: 24),
+              ElevatedButton.icon(
+                icon: Container(
+                    padding: EdgeInsets.all(8),
+                    color: Colors.white,
+                    child: Image.asset('assets/icono_google.png', height: 24.0)),
+                label: Text("Iniciar sesión con Google", style: TextStyle(color: Colors.white, fontSize: 16)),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Color(0xFF4285F4),
+                  foregroundColor: Colors.white,
+                  padding: EdgeInsets.all(8),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(8),
                   ),
                 ),
-                SizedBox(
-                  height: 30,
-                ),
-                SizedBox(height: 24),
-                
-                ElevatedButton(
-                  onPressed: () {
-                    signInWithGoogle(context);
-                  },
-                  child: Text("Iniciar sesión con Google"),
-                ),
-              ],
-            ),
+                onPressed: () {
+                  signInWithGoogle(context);
+                },
+              ),
+              SizedBox(
+                height: 50,
+              )
+            ],
           ),
         ),
       ),
