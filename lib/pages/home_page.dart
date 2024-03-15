@@ -22,7 +22,8 @@ class _HomePageState extends State<HomePage> {
   String photoURL = '';
   GoogleMapController? _mapController;
   LatLng _initialPosition = LatLng(-18.013788, -70.251682);
-
+  Set<Marker> _markers = {};
+  BitmapDescriptor? carIcon;
   void _onMapCreated(GoogleMapController controller) {
     _mapController = controller;
     _goToMyLocation();
@@ -52,6 +53,38 @@ class _HomePageState extends State<HomePage> {
     super.initState();
     _loadUserInfo();
     _loadInitialPosition();
+    _loadCarIcon();
+
+    LocationService().positionStream.listen((Position position) {
+      _updateCarMarker(position);
+    });
+  }
+
+  Future<void> _loadCarIcon() async {
+    carIcon = await BitmapDescriptor.fromAssetImage(
+      ImageConfiguration(size: Size(194, 194), devicePixelRatio: 2.5),
+      'assets/auto2.png',
+    );
+
+    setState(() {});
+  }
+
+  void _updateCarMarker(Position position) {
+    final markerId = MarkerId("car");
+    final marker = Marker(
+      markerId: markerId,
+      icon: carIcon ?? BitmapDescriptor.defaultMarker, 
+      position: LatLng(position.latitude, position.longitude),
+      anchor: Offset(0.5, 0.5), 
+        rotation: position.heading ?? 0.0,
+    );
+
+    setState(() {
+      _markers.removeWhere((m) => m.markerId == markerId);
+      _markers.add(marker);
+    });
+
+    _mapController?.animateCamera(CameraUpdate.newLatLng(LatLng(position.latitude, position.longitude)));
   }
 
   Future<void> _loadInitialPosition() async {
@@ -100,6 +133,7 @@ class _HomePageState extends State<HomePage> {
                             myLocationEnabled: true,
                             myLocationButtonEnabled: false,
                             zoomControlsEnabled: false,
+                            markers: _markers,
                           ),
                           Positioned(
                             top: 15,

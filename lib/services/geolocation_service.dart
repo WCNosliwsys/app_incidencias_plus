@@ -1,8 +1,11 @@
+import 'dart:async';
+
 import 'package:geolocator/geolocator.dart';
 
 class LocationService {
   static final LocationService _instance = LocationService._internal();
   GeolocatorPlatform _geolocatorPlatform = GeolocatorPlatform.instance;
+  final StreamController<Position> _positionStreamController = StreamController<Position>.broadcast();
 
   LocationService._internal();
   Position? _lastPosition;
@@ -36,6 +39,7 @@ class LocationService {
 
     _geolocatorPlatform.getPositionStream(locationSettings: locationSettings).listen((Position position) {
       _lastPosition = position;
+      _positionStreamController.add(position); 
       print("New location: ${position.latitude}, ${position.longitude}");
     });
   }
@@ -44,4 +48,6 @@ class LocationService {
     _lastPosition = await _geolocatorPlatform.getLastKnownPosition();
     return _lastPosition;
   }
+  Stream<Position> get positionStream => _positionStreamController.stream;
+
 }
