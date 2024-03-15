@@ -1,4 +1,5 @@
 import 'package:app_incidencias_plus/services/shared_preferences_services.dart';
+import 'package:app_incidencias_plus/widgets/mi_drawer.dart';
 import 'package:flutter/material.dart';
 import 'package:app_incidencias_plus/pages/login_page.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
@@ -6,35 +7,36 @@ import 'package:share_plus/share_plus.dart';
 
 import '../widgets/icon_circular.dart';
 
-class HomePage extends StatelessWidget {
+class HomePage extends StatefulWidget {
   const HomePage({Key? key}) : super(key: key);
 
-  void _logOut(BuildContext context) async {
-    // Asegúrate de inicializar SharedPreferences
-    await SharedPreferencesService().saveOnLogin(false);
-    // Redirige al usuario a la página de login
-    Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => LoginPage()));
-  }
+  @override
+  State<HomePage> createState() => _HomePageState();
+}
+
+class _HomePageState extends State<HomePage> {
+  String displayName='Usuario';
+  String email='email@ejemplo.com';
+  String photoURL='';
 
   @override
+  void initState() {
+    super.initState();
+    _loadUserInfo();
+  }
+
+  void _loadUserInfo() async {
+    displayName = await SharedPreferencesService().getDisplayName() ?? 'Usuario';
+    email = await SharedPreferencesService().getEmail() ?? 'email@ejemplo.com';
+    photoURL = await SharedPreferencesService().getPhotoURL() ?? '';
+    setState(() {});
+  }
+  @override
   Widget build(BuildContext context) {
-/*     return Scaffold(
-      appBar: AppBar(
-        title: const Text("Mi Home"),
-        actions: [
-          IconButton(
-            icon: Icon(Icons.exit_to_app),
-            onPressed: () => _logOut(context),
-            tooltip: "Cerrar sesión",
-          ),
-        ],
-      ),
-      body: Center(
-        child: Text("Bienvenido a la Home Page"),
-      ),
-    ); */
+
     return SafeArea(
       child: Scaffold(
+        drawer: MiDrawer(displayName: displayName, email: email, photoURL: photoURL),
         body: SingleChildScrollView(
           child: ConstrainedBox(
             constraints: BoxConstraints(
@@ -64,7 +66,23 @@ class HomePage extends StatelessWidget {
                           Positioned(
                             top: 15,
                             left: 10,
-                            child: IconCircular(Icons.menu, 25.0, 10),
+
+                            child: Builder(
+                              builder: (context) {
+                                return Material(
+                                  color: Colors
+                                      .transparent, 
+
+                                  child: InkWell(
+                                    customBorder: CircleBorder(),
+                                    child: IconCircular(Icons.menu, 25.0, 10),
+                                    onTap: () {
+                                      Scaffold.of(context).openDrawer();
+                                    },
+                                  ),
+                                );
+                              },
+                            ),
                           ),
                           Positioned(
                             top: 15,
