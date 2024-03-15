@@ -3,6 +3,8 @@
         android:label="app_incidencias_plus"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
+        <meta-data android:name="com.google.android.geo.API_KEY"
+               android:value="AIzaSyCEiTH_93oqcc8d-jj1M4RWrajTnRcLUjQ"/>
         <activity
             android:name=".MainActivity"
             android:exported="true"
