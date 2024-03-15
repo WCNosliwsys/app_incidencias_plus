@@ -13,6 +13,7 @@ void main() async {
     options: DefaultFirebaseOptions.currentPlatform,
   );
   runApp(MaterialApp(
+    debugShowCheckedModeBanner: false,
     home: SplashPage(),
   ));
 }

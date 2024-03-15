@@ -2,9 +2,11 @@ import 'package:app_incidencias_plus/services/shared_preferences_services.dart';
 import 'package:app_incidencias_plus/widgets/mi_drawer.dart';
 import 'package:flutter/material.dart';
 import 'package:app_incidencias_plus/pages/login_page.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:share_plus/share_plus.dart';
 
+import '../services/geolocation_service.dart';
 import '../widgets/icon_circular.dart';
 
 class HomePage extends StatefulWidget {
@@ -15,9 +17,34 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  String displayName='Usuario';
-  String email='email@ejemplo.com';
-  String photoURL='';
+  String displayName = 'Usuario';
+  String email = 'email@ejemplo.com';
+  String photoURL = '';
+  GoogleMapController? _mapController;
+
+  void _onMapCreated(GoogleMapController controller) {
+    _mapController = controller;
+    setState(() {});
+  }
+
+  void _goToMyLocation() async {
+    print("mi localizacion se intento");
+    Position? position = await LocationService().getLastKnownPosition();
+    print('mi position es: $position');
+    if (position != null) {
+      print("entramos");
+      if (_mapController != null) {
+        _mapController?.animateCamera(CameraUpdate.newCameraPosition(
+          CameraPosition(
+            target: LatLng(position.latitude, position.longitude),
+            zoom: 17.0,
+          ),
+        ));
+      } else {
+        print("Map controller is not initialized");
+      }
+    }
+  }
 
   @override
   void initState() {
@@ -31,9 +58,9 @@ class _HomePageState extends State<HomePage> {
     photoURL = await SharedPreferencesService().getPhotoURL() ?? '';
     setState(() {});
   }
+
   @override
   Widget build(BuildContext context) {
-
     return SafeArea(
       child: Scaffold(
         drawer: MiDrawer(displayName: displayName, email: email, photoURL: photoURL),
@@ -54,6 +81,7 @@ class _HomePageState extends State<HomePage> {
                         alignment: Alignment.center,
                         children: <Widget>[
                           GoogleMap(
+                            onMapCreated: _onMapCreated,
                             mapType: MapType.normal,
                             initialCameraPosition: CameraPosition(
                               target: LatLng(-18.013788, -70.251682),
@@ -66,13 +94,10 @@ class _HomePageState extends State<HomePage> {
                           Positioned(
                             top: 15,
                             left: 10,
-
                             child: Builder(
                               builder: (context) {
                                 return Material(
-                                  color: Colors
-                                      .transparent, 
-
+                                  color: Colors.transparent,
                                   child: InkWell(
                                     customBorder: CircleBorder(),
                                     child: IconCircular(Icons.menu, 25.0, 10),
@@ -104,11 +129,7 @@ class _HomePageState extends State<HomePage> {
                             bottom: 10,
                             right: 10,
                             child: GestureDetector(
-                              onTap: () {
-/*                                 getUserLocation().then((value) {
-                                  _controller.animateCamera(CameraUpdate.newLatLng(currentLocation));
-                                }); */
-                              },
+                              onTap: _goToMyLocation,
                               child: IconCircular(Icons.my_location, 25.0, 10),
                             ),
                           ),

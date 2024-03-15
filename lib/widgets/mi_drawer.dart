@@ -29,14 +29,14 @@ class MiDrawer extends StatelessWidget {
         padding: EdgeInsets.zero,
         children: [
           Container(
-            height: 200, // Ajusta este valor según necesites
+            height: 200, 
             child: DrawerHeader(
               decoration: BoxDecoration(color: Colors.black),
               child: Column(
                 children: [
                   Expanded(
                     child: CircleAvatar(
-                      radius: 45, // Ajusta el tamaño del avatar
+                      radius: 45, 
                       child: ClipOval(
                         child: photoURL.isNotEmpty
                             ? Image.network(photoURL, fit: BoxFit.cover)
@@ -44,7 +44,7 @@ class MiDrawer extends StatelessWidget {
                       ),
                     ),
                   ),
-                  SizedBox(height: 10), // Espacio adicional entre la imagen y los textos
+                  SizedBox(height: 10), 
                   Text(
                     displayName,
                     style: TextStyle(color: Colors.white, fontSize: 16),

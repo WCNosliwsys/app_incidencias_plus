@@ -20,13 +20,11 @@ class SharedPreferencesService {
     }
   }
 
-  // Keys
   static const String _onLoginKey = "onlogin";
   static const String _displayNameKey = "displayName";
   static const String _emailKey = "email";
   static const String _photoURLKey = "photoURL";
 
-  // Login
   Future<void> saveOnLogin(bool value) async {
     await _preferences.setBool(_onLoginKey, value);
   }
@@ -35,7 +33,6 @@ class SharedPreferencesService {
     return _preferences.getBool(_onLoginKey);
   }
 
-  // Display Name
   Future<void> saveDisplayName(String value) async {
     await _preferences.setString(_displayNameKey, value);
   }
@@ -44,7 +41,6 @@ class SharedPreferencesService {
     return _preferences.getString(_displayNameKey);
   }
 
-  // Email
   Future<void> saveEmail(String value) async {
     await _preferences.setString(_emailKey, value);
   }
@@ -53,7 +49,6 @@ class SharedPreferencesService {
     return _preferences.getString(_emailKey);
   }
 
-  // Photo URL
   Future<void> savePhotoURL(String value) async {
     await _preferences.setString(_photoURLKey, value);
   }
