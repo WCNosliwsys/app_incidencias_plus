@@ -21,10 +21,11 @@ class _HomePageState extends State<HomePage> {
   String email = 'email@ejemplo.com';
   String photoURL = '';
   GoogleMapController? _mapController;
+  LatLng _initialPosition = LatLng(-18.013788, -70.251682);
 
   void _onMapCreated(GoogleMapController controller) {
     _mapController = controller;
-    setState(() {});
+    _goToMyLocation();
   }
 
   void _goToMyLocation() async {
@@ -50,6 +51,15 @@ class _HomePageState extends State<HomePage> {
   void initState() {
     super.initState();
     _loadUserInfo();
+    _loadInitialPosition();
+  }
+
+  Future<void> _loadInitialPosition() async {
+    final position = await LocationService().getLastKnownPosition();
+    if (position != null) {
+      _initialPosition = LatLng(position.latitude, position.longitude);
+    }
+    setState(() {});
   }
 
   void _loadUserInfo() async {
