@@ -29,7 +29,7 @@ class BottomSheetIncidencia extends StatelessWidget {
             SizedBox(height: 5),
             botonIncidencia(context, "Accidente"),
             SizedBox(height: 5),
-            botonIncidencia(context, "Congestión"),
+            botonIncidencia(context, "Trafico"),
             SizedBox(
               height: 5,
             ),

@@ -4,6 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:share_plus/share_plus.dart';
+import 'package:uuid/uuid.dart';
+import '../models/custom_marker_info.dart';
 import '../services/geolocation_service.dart';
 import '../widgets/bottom_sheet_incidencia.dart';
 import '../widgets/icon_circular.dart';
@@ -25,6 +27,47 @@ class _HomePageState extends State<HomePage> {
   Set<Marker> _markers = {};
   BitmapDescriptor? carIcon;
   Position? _lastKnownPosition;
+  Map<MarkerId, CustomMarkerInfo> customMarkers = {};
+  Future<void> addCustomMarker(LatLng position, String type) async {
+    final id = Uuid().v4(); 
+    final createdAt = DateTime.now();
+
+    final iconPath = getIconPath(type); 
+    final icon = await BitmapDescriptor.fromAssetImage(ImageConfiguration(size: Size(48, 48)), iconPath);
+
+    final markerId = MarkerId(id);
+    final marker = Marker(
+      markerId: markerId,
+      icon: icon,
+      position: position,
+      infoWindow: InfoWindow(title: type, snippet: 'Hora: ${createdAt.hour}:${createdAt.minute}'),
+      onTap: () {
+      },
+    );
+
+    setState(() {
+      customMarkers[markerId] = CustomMarkerInfo(
+        id: id,
+        position: position,
+        type: type,
+        createdAt: createdAt,
+      );
+      _markers.add(marker);
+    });
+  }
+
+  String getIconPath(String type) {
+    switch (type) {
+      case 'Operativo':
+        return 'assets/marker_operativo.png';
+      case 'Trafico':
+        return 'assets/marker_trafico.png';
+      case 'Accidente':
+        return 'assets/marker_accidente.png';
+      default:
+        return '';
+    }
+  }
 
   void _onMapCreated(GoogleMapController controller) {
     _mapController = controller;
@@ -38,7 +81,7 @@ class _HomePageState extends State<HomePage> {
         _mapController?.animateCamera(CameraUpdate.newCameraPosition(
           CameraPosition(
             target: LatLng(position.latitude, position.longitude),
-            zoom: 17.0,
+            zoom: 16.0,
           ),
         ));
       } else {
@@ -118,7 +161,7 @@ class _HomePageState extends State<HomePage> {
                     mapType: MapType.normal,
                     initialCameraPosition: CameraPosition(
                       target: _initialPosition,
-                      zoom: 17.0,
+                      zoom: 16.0,
                     ),
                     myLocationEnabled: true,
                     myLocationButtonEnabled: false,
@@ -198,6 +241,7 @@ class _HomePageState extends State<HomePage> {
                     );
                     if (selectedLocation != null) {
                       print("Ubicación seleccionada: ${selectedLocation.latitude}, ${selectedLocation.longitude}");
+                      addCustomMarker(selectedLocation, result['tipoIncidencia']);
                     }
                   }
                 },
