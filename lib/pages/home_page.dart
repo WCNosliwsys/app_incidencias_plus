@@ -31,9 +31,6 @@ class _HomePageState extends State<HomePage> {
   Position? _lastKnownPosition;
   Map<MarkerId, CustomMarkerInfo> customMarkers = {};
   Future<void> addCustomMarker(LatLng position, String type, String id, DateTime createdAt, String email) async {
-/*     final id = Uuid().v4();
-    final createdAt = DateTime.now(); */
-
     final iconPath = getIconPath(type);
     final icon = await BitmapDescriptor.fromAssetImage(ImageConfiguration(size: Size(48, 48)), iconPath);
 

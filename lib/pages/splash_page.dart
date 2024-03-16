@@ -1,7 +1,10 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:app_incidencias_plus/pages/home_page.dart';
 import 'package:app_incidencias_plus/pages/login_page.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:permission_handler/permission_handler.dart';
 import '../services/geolocation_service.dart';
 import '../services/shared_preferences_services.dart';
 
@@ -16,13 +19,18 @@ class _SplashPageState extends State<SplashPage> {
   @override
   void initState() {
     super.initState();
-    requestLocationPermission();
+    requestPermissions();
   }
 
-  void requestLocationPermission() async {
+  Future<void> requestPermissions() async {
     final locationService = LocationService();
     try {
       await locationService.initialize();
+      if (Platform.isAndroid && await Permission.notification.isPermanentlyDenied) {
+        openAppSettings();
+      } else if (Platform.isAndroid && !await Permission.notification.isGranted) {
+        await Permission.notification.request();
+      }
       _navigateToNextPage();
     } catch (e) {
       _handleLocationServiceError(e);
