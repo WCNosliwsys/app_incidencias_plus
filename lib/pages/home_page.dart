@@ -1,11 +1,9 @@
 import 'package:app_incidencias_plus/services/shared_preferences_services.dart';
 import 'package:app_incidencias_plus/widgets/mi_drawer.dart';
 import 'package:flutter/material.dart';
-import 'package:app_incidencias_plus/pages/login_page.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:share_plus/share_plus.dart';
-
 import '../services/geolocation_service.dart';
 import '../widgets/bottom_sheet_incidencia.dart';
 import '../widgets/icon_circular.dart';
@@ -26,17 +24,16 @@ class _HomePageState extends State<HomePage> {
   LatLng _initialPosition = LatLng(-18.013788, -70.251682);
   Set<Marker> _markers = {};
   BitmapDescriptor? carIcon;
+  Position? _lastKnownPosition;
+
   void _onMapCreated(GoogleMapController controller) {
     _mapController = controller;
     _goToMyLocation();
   }
 
   void _goToMyLocation() async {
-    print("mi localizacion se intento");
     Position? position = await LocationService().getLastKnownPosition();
-    print('mi position es: $position');
     if (position != null) {
-      print("entramos");
       if (_mapController != null) {
         _mapController?.animateCamera(CameraUpdate.newCameraPosition(
           CameraPosition(
@@ -59,6 +56,7 @@ class _HomePageState extends State<HomePage> {
 
     LocationService().positionStream.listen((Position position) {
       _updateCarMarker(position);
+      _lastKnownPosition = position;
     });
   }
 
@@ -191,7 +189,11 @@ class _HomePageState extends State<HomePage> {
                       context,
                       MaterialPageRoute(
                         builder: (context) => SeleccionarMapaPage(
-                            tipoIncidencia: result['tipoIncidencia']), 
+                          tipoIncidencia: result['tipoIncidencia'],
+                          initialPosition: _lastKnownPosition != null
+                              ? LatLng(_lastKnownPosition!.latitude, _lastKnownPosition!.longitude)
+                              : null,
+                        ),
                       ),
                     );
                   }

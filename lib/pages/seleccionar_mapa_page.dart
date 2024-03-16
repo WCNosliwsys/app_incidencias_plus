@@ -1,20 +1,27 @@
 import 'dart:async';
 import 'dart:convert';
+import 'package:app_incidencias_plus/services/geolocation_service.dart';
 import 'package:flutter/material.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import '../../widgets/icon_circular.dart';
 import '../utils/mapstyle.dart';
 
 class SeleccionarMapaPage extends StatefulWidget {
- final String tipoIncidencia;
-  const SeleccionarMapaPage({super.key,required this.tipoIncidencia, });
+  final String tipoIncidencia;
+  final LatLng? initialPosition;
+  const SeleccionarMapaPage({
+    super.key,
+    required this.tipoIncidencia,
+    this.initialPosition,
+  });
 
   @override
   State<SeleccionarMapaPage> createState() => _SeleccionarMapaPageState();
 }
 
 class _SeleccionarMapaPageState extends State<SeleccionarMapaPage> {
-  LatLng currentLocation = const LatLng(-2.1611081, -79.9022226);
+  late LatLng currentLocation = widget.initialPosition ?? const LatLng(-2.1611081, -79.9022226);
   final Completer<GoogleMapController> _controller = Completer();
   GoogleMapController? mapController;
 
@@ -23,6 +30,22 @@ class _SeleccionarMapaPageState extends State<SeleccionarMapaPage> {
     mapController = await _controller.future;
     mapController?.setMapStyle(jsonEncode(mapStyle));
     setState(() {});
+  }
+
+  void _goToMyLocation() async {
+    Position? position = await LocationService().getLastKnownPosition();
+    if (position != null) {
+      if (mapController != null) {
+        mapController?.animateCamera(CameraUpdate.newCameraPosition(
+          CameraPosition(
+            target: LatLng(position.latitude, position.longitude),
+            zoom: 15.0,
+          ),
+        ));
+      } else {
+        print("Map controller is not initialized");
+      }
+    }
   }
 
   @override
@@ -36,7 +59,7 @@ class _SeleccionarMapaPageState extends State<SeleccionarMapaPage> {
             SizedBox(
               height: maxheight,
               child: GoogleMap(
-                initialCameraPosition: CameraPosition(target: currentLocation, zoom: 14.5),
+                initialCameraPosition: CameraPosition(target: currentLocation, zoom: 15),
                 onMapCreated: onCreated,
                 compassEnabled: true,
                 zoomControlsEnabled: false,
@@ -48,7 +71,7 @@ class _SeleccionarMapaPageState extends State<SeleccionarMapaPage> {
               ),
             ),
             Transform.translate(
-              offset: const Offset(0, -45),
+              offset: const Offset(0, 0),
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
@@ -86,7 +109,7 @@ class _SeleccionarMapaPageState extends State<SeleccionarMapaPage> {
             Positioned(
               top: 50,
               right: 10,
-              child: GestureDetector(onTap: () async {}, child: IconCircular(Icons.my_location, 25.0, 10)),
+              child: GestureDetector(onTap: _goToMyLocation, child: IconCircular(Icons.my_location, 25.0, 10)),
             ),
             Positioned(
               bottom: 90,
