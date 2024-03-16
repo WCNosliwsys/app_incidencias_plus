@@ -9,6 +9,7 @@ import 'package:share_plus/share_plus.dart';
 import '../services/geolocation_service.dart';
 import '../widgets/bottom_sheet_incidencia.dart';
 import '../widgets/icon_circular.dart';
+import 'seleccionar_mapa_page.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({Key? key}) : super(key: key);
@@ -180,14 +181,19 @@ class _HomePageState extends State<HomePage> {
                     context: context,
                     isScrollControlled: true,
                     builder: (BuildContext context) {
-                      return BottomSheetIncidencia(); // Pasa el tipo de incidencia inicial si lo tienes, si no, deja este campo vacío o maneja la lógica como prefieras.
+                      return BottomSheetIncidencia();
                     },
                   );
 
                   if (result != null && result.containsKey('tipoIncidencia')) {
                     print("Tipo de incidencia seleccionado: ${result['tipoIncidencia']}");
-                    // Aquí puedes hacer lo que necesites con el tipo de incidencia seleccionado
-                    // Por ejemplo, actualizar algún estado de tu UI o realizar alguna acción
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => SeleccionarMapaPage(
+                            tipoIncidencia: result['tipoIncidencia']), 
+                      ),
+                    );
                   }
                 },
                 child: Text("Reportar Incidencia"),
