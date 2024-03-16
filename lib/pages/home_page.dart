@@ -29,9 +29,9 @@ class _HomePageState extends State<HomePage> {
   BitmapDescriptor? carIcon;
   Position? _lastKnownPosition;
   Map<MarkerId, CustomMarkerInfo> customMarkers = {};
-  Future<void> addCustomMarker(LatLng position, String type) async {
-    final id = Uuid().v4();
-    final createdAt = DateTime.now();
+  Future<void> addCustomMarker(LatLng position, String type, String id, DateTime createdAt, String email) async {
+/*     final id = Uuid().v4();
+    final createdAt = DateTime.now(); */
 
     final iconPath = getIconPath(type);
     final icon = await BitmapDescriptor.fromAssetImage(ImageConfiguration(size: Size(48, 48)), iconPath);
@@ -55,6 +55,9 @@ class _HomePageState extends State<HomePage> {
       );
       _markers.add(marker);
     });
+  }
+
+  void saveIncidenciaToFirebase(LatLng position, String type, String id, DateTime createdAt, String email) async {
     final documentReference = FirebaseFirestore.instance.collection('incidencias').doc(id);
     await documentReference.set({
       'id': id,
@@ -102,6 +105,7 @@ class _HomePageState extends State<HomePage> {
   @override
   void initState() {
     super.initState();
+    _loadMarkersFromFirestore();
     _loadUserInfo();
     _loadInitialPosition();
     _loadCarIcon();
@@ -110,6 +114,20 @@ class _HomePageState extends State<HomePage> {
       _updateCarMarker(position);
       _lastKnownPosition = position;
     });
+  }
+
+  void _loadMarkersFromFirestore() async {
+    final collection = FirebaseFirestore.instance.collection('incidencias');
+    final snapshot = await collection.get();
+
+    for (var doc in snapshot.docs) {
+      final data = doc.data();
+      final position = LatLng((data['position'] as GeoPoint).latitude, (data['position'] as GeoPoint).longitude);
+      final type = data['type'] as String;
+      final createdAt = data['createdAt'].toDate() as DateTime;
+      final email = data['email'] as String;
+      addCustomMarker(position, type, doc.id, createdAt, email);
+    }
   }
 
   Future<void> _loadCarIcon() async {
@@ -250,7 +268,11 @@ class _HomePageState extends State<HomePage> {
                     );
                     if (selectedLocation != null) {
                       print("Ubicación seleccionada: ${selectedLocation.latitude}, ${selectedLocation.longitude}");
-                      addCustomMarker(selectedLocation, result['tipoIncidencia']);
+                      final id = Uuid().v4();
+                      final createdAt = DateTime.now();
+
+                      addCustomMarker(selectedLocation, result['tipoIncidencia'], id, createdAt, email);
+                      saveIncidenciaToFirebase(selectedLocation, result['tipoIncidencia'], id, createdAt, email);
                     }
                   }
                 },
