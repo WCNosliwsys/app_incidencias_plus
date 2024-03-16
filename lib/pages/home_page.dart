@@ -1,5 +1,6 @@
 import 'package:app_incidencias_plus/services/shared_preferences_services.dart';
 import 'package:app_incidencias_plus/widgets/mi_drawer.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
@@ -29,10 +30,10 @@ class _HomePageState extends State<HomePage> {
   Position? _lastKnownPosition;
   Map<MarkerId, CustomMarkerInfo> customMarkers = {};
   Future<void> addCustomMarker(LatLng position, String type) async {
-    final id = Uuid().v4(); 
+    final id = Uuid().v4();
     final createdAt = DateTime.now();
 
-    final iconPath = getIconPath(type); 
+    final iconPath = getIconPath(type);
     final icon = await BitmapDescriptor.fromAssetImage(ImageConfiguration(size: Size(48, 48)), iconPath);
 
     final markerId = MarkerId(id);
@@ -41,8 +42,7 @@ class _HomePageState extends State<HomePage> {
       icon: icon,
       position: position,
       infoWindow: InfoWindow(title: type, snippet: 'Hora: ${createdAt.hour}:${createdAt.minute}'),
-      onTap: () {
-      },
+      onTap: () {},
     );
 
     setState(() {
@@ -51,8 +51,17 @@ class _HomePageState extends State<HomePage> {
         position: position,
         type: type,
         createdAt: createdAt,
+        email: email,
       );
       _markers.add(marker);
+    });
+    final documentReference = FirebaseFirestore.instance.collection('incidencias').doc(id);
+    await documentReference.set({
+      'id': id,
+      'position': GeoPoint(position.latitude, position.longitude),
+      'type': type,
+      'createdAt': createdAt,
+      'email': email,
     });
   }
 
