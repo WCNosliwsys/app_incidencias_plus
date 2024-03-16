@@ -22,10 +22,10 @@ class SeleccionarMapaPage extends StatefulWidget {
 }
 
 class _SeleccionarMapaPageState extends State<SeleccionarMapaPage> {
-  late LatLng currentLocation = widget.initialPosition ?? const LatLng(-2.1611081, -79.9022226);
+  late LatLng currentLocation = widget.initialPosition ?? const LatLng(-18.013788, -70.251682);
   final Completer<GoogleMapController> _controller = Completer();
   GoogleMapController? mapController;
-  late LatLng _lastMapPosition = widget.initialPosition ?? const LatLng(-2.1611081, -79.9022226);
+  late LatLng _lastMapPosition = widget.initialPosition ?? const LatLng(-18.013788, -70.251682);
   Future<void> onCreated(GoogleMapController controller) async {
     _controller.complete(controller);
     mapController = await _controller.future;

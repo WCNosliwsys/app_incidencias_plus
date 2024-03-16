@@ -20,7 +20,6 @@ void main() async {
     options: DefaultFirebaseOptions.currentPlatform,
   );
   await initializeService();
-
   runApp(MaterialApp(
     debugShowCheckedModeBanner: false,
     home: SplashPage(),
@@ -29,16 +28,13 @@ void main() async {
 
 Future<void> initializeService() async {
   final service = FlutterBackgroundService();
-
   const AndroidNotificationChannel channel = AndroidNotificationChannel(
-    'my_foreground', 
-    'MY FOREGROUND SERVICE', 
-    description: 'This channel is used for important notifications.', 
-    importance: Importance.low, 
+    'my_foreground',
+    'MY FOREGROUND SERVICE',
+    description: 'This channel is used for important notifications.',
+    importance: Importance.low,
   );
-
   final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
-
   if (Platform.isIOS || Platform.isAndroid) {
     await flutterLocalNotificationsPlugin.initialize(
       const InitializationSettings(
@@ -50,24 +46,19 @@ Future<void> initializeService() async {
   await flutterLocalNotificationsPlugin
       .resolvePlatformSpecificImplementation<AndroidFlutterLocalNotificationsPlugin>()
       ?.createNotificationChannel(channel);
-
   await service.configure(
     androidConfiguration: AndroidConfiguration(
       onStart: onStart,
-
       autoStart: true,
       isForegroundMode: true,
-
       notificationChannelId: 'my_foreground',
-      initialNotificationTitle: 'AWESOME SERVICE',
-      initialNotificationContent: 'Initializing',
+      initialNotificationTitle: 'Servicio de Incidencias',
+      initialNotificationContent: 'Esperando actualizaciones',
       foregroundServiceNotificationId: 888,
     ),
     iosConfiguration: IosConfiguration(
       autoStart: true,
-
       onForeground: onStart,
-
       onBackground: onIosBackground,
     ),
   );
@@ -82,11 +73,26 @@ Future<bool> onIosBackground(ServiceInstance service) async {
 void onStart(ServiceInstance service) async {
   DartPluginRegistrant.ensureInitialized();
   final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
-  print("iniciando notificationPlugin");
-
   if (Firebase.apps.isEmpty) {
     await Firebase.initializeApp(
       options: DefaultFirebaseOptions.currentPlatform,
+    );
+  }
+  Future<void> _showNotification(FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin, String type) async {
+    const AndroidNotificationDetails androidPlatformChannelSpecifics = AndroidNotificationDetails(
+      'incidencias_id',
+      'Incidencias',
+      channelDescription: 'Notificaciones de incidencias',
+      importance: Importance.max,
+      priority: Priority.high,
+      ticker: 'ticker',
+    );
+    const NotificationDetails platformChannelSpecifics = NotificationDetails(android: androidPlatformChannelSpecifics);
+    await flutterLocalNotificationsPlugin.show(
+      0,
+      'AVISO Incidencia',
+      type,
+      platformChannelSpecifics,
     );
   }
 
@@ -108,27 +114,10 @@ void onStart(ServiceInstance service) async {
           'createdAt': createdAt.toIso8601String(),
           'email': email,
         });
+        _showNotification(flutterLocalNotificationsPlugin, type);
       } else if (change.type == DocumentChangeType.modified) {
         print('Documento modificado: ${change.doc.data()}');
       }
     }
   });
-
-
-  Timer.periodic(const Duration(seconds: 10), (timer) async {
-    flutterLocalNotificationsPlugin.show(
-      888,
-      'COOL SERVICE',
-      'Awesome ${DateTime.now()}',
-      const NotificationDetails(
-        android: AndroidNotificationDetails(
-          'my_foreground',
-          'MY FOREGROUND SERVICE',
-          icon: 'ic_bg_service_small',
-          ongoing: true,
-        ),
-      ),
-    );
-  });
 }
-
