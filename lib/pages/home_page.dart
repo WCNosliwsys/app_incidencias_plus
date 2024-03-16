@@ -2,6 +2,7 @@ import 'package:app_incidencias_plus/services/shared_preferences_services.dart';
 import 'package:app_incidencias_plus/widgets/mi_drawer.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_background_service/flutter_background_service.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:share_plus/share_plus.dart';
@@ -109,10 +110,28 @@ class _HomePageState extends State<HomePage> {
     _loadUserInfo();
     _loadInitialPosition();
     _loadCarIcon();
+    _listenToMarkerUpdates();
 
     LocationService().positionStream.listen((Position position) {
       _updateCarMarker(position);
       _lastKnownPosition = position;
+    });
+  }
+
+  void _listenToMarkerUpdates() {
+    FlutterBackgroundService().on('updateMarkers').listen((data) {
+      if (data != null) {
+        final id = data['id'] as String;
+        final lat = data['lat'] as double;
+        final lng = data['lng'] as double;
+        final type = data['type'] as String;
+        final createdAt = DateTime.parse(data['createdAt'] as String);
+        final email = data['email'] as String;
+
+        final LatLng position = LatLng(lat, lng);
+
+        addCustomMarker(position, type, id, createdAt, email);
+      }
     });
   }
 
