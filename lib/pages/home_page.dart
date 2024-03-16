@@ -185,7 +185,7 @@ class _HomePageState extends State<HomePage> {
 
                   if (result != null && result.containsKey('tipoIncidencia')) {
                     print("Tipo de incidencia seleccionado: ${result['tipoIncidencia']}");
-                    Navigator.push(
+                    final LatLng? selectedLocation = await Navigator.push(
                       context,
                       MaterialPageRoute(
                         builder: (context) => SeleccionarMapaPage(
@@ -196,6 +196,9 @@ class _HomePageState extends State<HomePage> {
                         ),
                       ),
                     );
+                    if (selectedLocation != null) {
+                      print("Ubicación seleccionada: ${selectedLocation.latitude}, ${selectedLocation.longitude}");
+                    }
                   }
                 },
                 child: Text("Reportar Incidencia"),

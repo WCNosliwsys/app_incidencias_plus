@@ -10,6 +10,7 @@ import '../utils/mapstyle.dart';
 class SeleccionarMapaPage extends StatefulWidget {
   final String tipoIncidencia;
   final LatLng? initialPosition;
+
   const SeleccionarMapaPage({
     super.key,
     required this.tipoIncidencia,
@@ -24,7 +25,7 @@ class _SeleccionarMapaPageState extends State<SeleccionarMapaPage> {
   late LatLng currentLocation = widget.initialPosition ?? const LatLng(-2.1611081, -79.9022226);
   final Completer<GoogleMapController> _controller = Completer();
   GoogleMapController? mapController;
-
+  late LatLng _lastMapPosition = widget.initialPosition ?? const LatLng(-2.1611081, -79.9022226);
   Future<void> onCreated(GoogleMapController controller) async {
     _controller.complete(controller);
     mapController = await _controller.future;
@@ -68,6 +69,9 @@ class _SeleccionarMapaPageState extends State<SeleccionarMapaPage> {
                 tiltGesturesEnabled: true,
                 myLocationEnabled: true,
                 myLocationButtonEnabled: false,
+                onCameraMove: (CameraPosition position) {
+                  _lastMapPosition = position.target;
+                },
               ),
             ),
             Transform.translate(
@@ -134,7 +138,11 @@ class _SeleccionarMapaPageState extends State<SeleccionarMapaPage> {
               left: 10,
               right: 10,
               child: ElevatedButton(
-                onPressed: () {},
+                onPressed: () {
+                  if (_lastMapPosition != null) {
+                    Navigator.pop(context, _lastMapPosition);
+                  }
+                },
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Color(0xFFFE5722),
                   shape: RoundedRectangleBorder(

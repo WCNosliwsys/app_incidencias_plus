@@ -34,13 +34,12 @@ class LocationService {
   void _startListening() {
     const locationSettings = LocationSettings(
       accuracy: LocationAccuracy.high,
-      distanceFilter: 0, 
+      distanceFilter: 0,
     );
 
     _geolocatorPlatform.getPositionStream(locationSettings: locationSettings).listen((Position position) {
       _lastPosition = position;
-      _positionStreamController.add(position); 
-      print("New location: ${position.latitude}, ${position.longitude}");
+      _positionStreamController.add(position);
     });
   }
 
@@ -48,6 +47,6 @@ class LocationService {
     _lastPosition = await _geolocatorPlatform.getLastKnownPosition();
     return _lastPosition;
   }
-  Stream<Position> get positionStream => _positionStreamController.stream;
 
+  Stream<Position> get positionStream => _positionStreamController.stream;
 }
