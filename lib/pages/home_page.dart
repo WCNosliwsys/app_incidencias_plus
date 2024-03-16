@@ -7,6 +7,7 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:share_plus/share_plus.dart';
 
 import '../services/geolocation_service.dart';
+import '../widgets/bottom_sheet_incidencia.dart';
 import '../widgets/icon_circular.dart';
 
 class HomePage extends StatefulWidget {
@@ -173,13 +174,26 @@ class _HomePageState extends State<HomePage> {
               width: double.infinity,
               padding: EdgeInsets.all(16.0),
               child: ElevatedButton(
-                onPressed: () {
-                  
+                onPressed: () async {
+                  final result = await showModalBottomSheet<Map<String, dynamic>>(
+                    backgroundColor: Colors.transparent,
+                    context: context,
+                    isScrollControlled: true,
+                    builder: (BuildContext context) {
+                      return BottomSheetIncidencia(); // Pasa el tipo de incidencia inicial si lo tienes, si no, deja este campo vacío o maneja la lógica como prefieras.
+                    },
+                  );
+
+                  if (result != null && result.containsKey('tipoIncidencia')) {
+                    print("Tipo de incidencia seleccionado: ${result['tipoIncidencia']}");
+                    // Aquí puedes hacer lo que necesites con el tipo de incidencia seleccionado
+                    // Por ejemplo, actualizar algún estado de tu UI o realizar alguna acción
+                  }
                 },
                 child: Text("Reportar Incidencia"),
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: Theme.of(context).primaryColor, 
-                  foregroundColor: Colors.white, 
+                  backgroundColor: Theme.of(context).primaryColor,
+                  foregroundColor: Colors.white,
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(10.0),
                   ),
